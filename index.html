@@ -26,14 +26,6 @@
       --r:18px;
     }
 
-    /* Mode nuit terrain: gros chiffres + contraste */
-    body.night{
-      --bg1:#00030a; --bg2:#030a18;
-      --card:#0b1022f0;
-      --stroke:#1b274b; --stroke2:#2a3f78;
-      --text:#f2f6ff; --muted:#b8c5ff;
-    }
-
     *{ box-sizing:border-box; }
     body{
       margin:0;
@@ -272,10 +264,7 @@
         </div>
       </div>
 
-      <div class="toggle" id="nightToggle" role="button" aria-label="Mode nuit">
-        <span class="dot"></span>
-        <span id="nightLabel">Mode nuit</span>
-      </div>
+      
     </div>
 
     <div class="card">
@@ -561,16 +550,6 @@
     });
   });
 
-  // Mode nuit
-  function updateNightLabel(){
-    const on = document.body.classList.contains("night");
-    document.getElementById("nightLabel").textContent = on ? "Nuit ON" : "Mode nuit";
-  }
-  document.getElementById("nightToggle").addEventListener("click", () => {
-    document.body.classList.toggle("night");
-    updateNightLabel();
-    saveState();
-  });
 
   // Inputs live
   [flowInput, minsInput, p15, p5a, p5b].forEach(el => {
@@ -587,8 +566,6 @@
     p15.value = 200;
     p5a.value = 200;
     p5b.value = 200;
-    document.body.classList.remove("night");
-    updateNightLabel();
     updateMarginUI();
     updateMinsUI();
     calc();
