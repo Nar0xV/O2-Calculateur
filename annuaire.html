@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Annuaire — SAMU 74</title>
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- ✅ CSS commun -->
+  <link rel="stylesheet" href="shared.css" />
+
+  <!-- ✅ CSS spécifique Annuaire (léger) -->
+  <style>
+    /* Bouton header identique partout (si pas déjà dans shared.css) */
+    .headerBtn{
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:10px 14px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .headerBtn:active{ transform: scale(.99); }
+    .headerBtn:hover{
+      border-color:#4a6bff;
+      box-shadow:
+        0 0 0 4px rgba(74,107,255,.10),
+        inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    /* Annuaire */
+    .list{ display:grid; gap:10px; margin-top:10px; }
+
+    .item{
+      border:1px solid var(--stroke);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+      position: relative;
+      overflow:hidden;
+    }
+    .item::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(350px 140px at 10% 0%, rgba(255,255,255,.05), transparent 60%);
+      pointer-events:none;
+    }
+
+    .rowTop{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .name{ font-weight:900; font-size: 15px; }
+    .meta{ margin-top:4px; font-size:12px; color:var(--muted); line-height:1.35; }
+
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius:999px; font-weight:900;
+      border:1px solid var(--stroke); background:#0a1228; white-space:nowrap;
+    }
+    .dot{ width:10px; height:10px; border-radius:50%; background: var(--pBlue); }
+
+    .tag.sau{ color: var(--pBlue); border-color: color-mix(in oklab, var(--pBlue) 45%, var(--stroke) 55%); }
+    .tag.sau .dot{ background: var(--pBlue); }
+
+    .tag.smur{ color: var(--pGreen); border-color: color-mix(in oklab, var(--pGreen) 45%, var(--stroke) 55%); }
+    .tag.smur .dot{ background: var(--pGreen); }
+
+    .tag.reg{ color: var(--pYellow); border-color: color-mix(in oklab, var(--pYellow) 45%, var(--stroke) 55%); }
+    .tag.reg .dot{ background: var(--pYellow); }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .btn{
+      flex:1;
+      min-width: 120px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, #142b66, #0b1d4a);
+      color: var(--text);
+      font-weight:900;
+      cursor:pointer;
+      text-align:center;
+      text-decoration:none;
+    }
+    .btn.secondary{ background: transparent; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Annuaire</h1>
+        <div class="subtitle">SAU / SMUR / RÉGULATION • Appel + Copie</div>
+      </div>
+      <a class="headerBtn" href="index.html">Accueil</a>
+    </div>
+
+    <div class="card">
+      <label>Recherche</label>
+      <input id="q" type="text" placeholder="Nom, ville, numéro…" autocomplete="off" />
+
+      <div class="hint" style="margin-top:10px;">Catégorie</div>
+      <div class="row" style="margin-top:8px;" id="tabs">
+        <span class="chip active" data-cat="ALL">Tout</span>
+        <span class="chip" data-cat="SAU">SAU</span>
+        <span class="chip" data-cat="SMUR">SMUR</span>
+        <span class="chip" data-cat="REGULATION">Régulation</span>
+      </div>
+
+      <div class="hint" id="countLine" style="margin-top:10px;">—</div>
+    </div>
+
+    <div class="card">
+      <div id="list" class="list">—</div>
+    </div>
+  </div>
+
+<script>
+  /* ✅ Modifie tes numéros ici directement */
+  const CONTACTS = [
+    // SAU
+    { cat:"SAU", name:"SAU Annecy", tel:"04 50 00 00 00", note:"Standard" },
+
+    // SMUR
+    { cat:"SMUR", name:"SMUR Annecy", tel:"04 50 00 00 00", note:"Ligne directe" },
+
+    // RÉGULATION
+    { cat:"REGULATION", name:"Régulation SAMU", tel:"15", note:"Urgence" },
+  ];
+
+  let currentCat = "ALL";
+
+  const q = document.getElementById("q");
+  const list = document.getElementById("list");
+  const countLine = document.getElementById("countLine");
+
+  function cleanTel(s){
+    const raw = String(s || "").trim();
+    const plus = raw.startsWith("+") ? "+" : "";
+    const digits = raw.replace(/[^\d]/g, "");
+    return plus + digits;
+  }
+
+  function esc(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function tagClass(cat){
+    if(cat === "SAU") return "sau";
+    if(cat === "SMUR") return "smur";
+    return "reg";
+  }
+
+  function render(){
+    const needle = (q.value || "").trim().toLowerCase();
+
+    const filtered = CONTACTS.filter(c => {
+      if(currentCat !== "ALL" && c.cat !== currentCat) return false;
+      if(!needle) return true;
+      const blob = `${c.cat} ${c.name} ${c.tel} ${c.note || ""}`.toLowerCase();
+      return blob.includes(needle);
+    });
+
+    countLine.textContent = `${filtered.length} contact(s)`;
+
+    if(filtered.length === 0){
+      list.innerHTML = `<div class="hint">Aucun résultat.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(c => {
+      const telClean = cleanTel(c.tel);
+      const note = c.note ? ` • ${esc(c.note)}` : "";
+      return `
+        <div class="item">
+          <div class="rowTop">
+            <div>
+              <div class="name">${esc(c.name)}</div>
+              <div class="meta">${esc(c.tel)}${note}</div>
+            </div>
+            <div class="tag ${tagClass(c.cat)}">
+              <span class="dot"></span>
+              <span>${esc(c.cat === "REGULATION" ? "RÉGULATION" : c.cat)}</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn" href="tel:${telClean}">Appeler</a>
+            <button class="btn secondary" data-copy="${esc(telClean)}">Copier</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    list.querySelectorAll("[data-copy]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const val = btn.getAttribute("data-copy") || "";
+        try{
+          await navigator.clipboard.writeText(val);
+          btn.textContent = "Copié ✅";
+          setTimeout(()=> btn.textContent = "Copier", 900);
+        }catch{
+          alert("Copie impossible ici. Copie manuellement le numéro.");
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll("#tabs .chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("#tabs .chip").forEach(x => x.classList.remove("active"));
+      chip.classList.add("active");
+      currentCat = chip.dataset.cat;
+      render();
+    });
+  });
+
+  q.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
