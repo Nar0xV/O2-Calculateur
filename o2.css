@@ -112,3 +112,38 @@
 
 .pBlue{ border-color: color-mix(in oklab, var(--pBlue) 45%, var(--stroke) 55%); color: var(--pBlue); }
 .pBlue .dotP{ background: var(--pBlue); }
+
+/* --- FIX iPhone: le tag pression ne doit pas déborder --- */
+.pTag{
+  width: 100% !important;          /* au lieu de fit-content */
+  max-width: 100%;
+  flex-wrap: wrap;                 /* autorise retour à la ligne */
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.pTag span{
+  white-space: normal;             /* autorise le retour à la ligne */
+}
+
+.pTag .dotP{
+  flex: 0 0 auto;
+}
+
+/* texte plus stable sur mobile */
+.pTag{
+  font-size: 18px;
+}
+@media (max-width:560px){
+  .pTag{ font-size: 16px; }
+}
+
+.bottle{
+  min-width: 0;    /* important pour éviter les débordements de contenu */
+}
+.bottle .meta{
+  overflow-wrap: anywhere;
+}
