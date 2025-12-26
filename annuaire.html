@@ -83,7 +83,7 @@
 
     <div class="card">
       <label>Recherche</label>
-      <input id="q" type="text" placeholder="Nom, ville, numéro…" autocomplete="off" />
+      <input id="q" type="text" placeholder="Nom, numéro…" autocomplete="off" />
 
       <div class="hint" style="margin-top:10px;">Catégorie</div>
       <div class="row" style="margin-top:8px;" id="tabs">
@@ -189,10 +189,7 @@
             </div>
           </div>
 
-          <div class="actions">
-            <a class="btn" href="tel:${telClean}">Appeler</a>
-            <button class="btn secondary" data-copy="${esc(telClean)}">Copier</button>
-          </div>
+      
         </div>
       `;
     }).join("");
