@@ -26,14 +26,6 @@
       --r:18px;
     }
 
-    /* Mode nuit terrain: gros chiffres + contraste */
-    body.night{
-      --bg1:#00030a; --bg2:#030a18;
-      --card:#0b1022f0;
-      --stroke:#1b274b; --stroke2:#2a3f78;
-      --text:#f2f6ff; --muted:#b8c5ff;
-    }
-
     *{ box-sizing:border-box; }
     body{
       margin:0;
@@ -53,25 +45,6 @@
     }
     h1{ font-size: 18px; margin:0; letter-spacing:.2px; }
     .subtitle{ font-size:12px; color:var(--muted); line-height:1.35; }
-
-    .toggle{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border:1px solid var(--stroke);
-      border-radius: 999px;
-      background: linear-gradient(180deg, #0b142d, #081027);
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-      font-size:12px;
-      color:var(--text);
-    }
-    .dot{
-      width:10px; height:10px; border-radius:50%;
-      background: #4a6bff;
-      box-shadow: 0 0 0 4px rgba(74,107,255,.14);
-    }
-    body.night .dot{ background:#20e3a2; box-shadow:0 0 0 4px rgba(32,227,162,.14); }
 
     .card{
       background: linear-gradient(180deg, var(--card), #0b1430cc);
@@ -100,7 +73,6 @@
       outline:none;
       font-size:14px;
     }
-    body.night input{ font-size: 16px; padding: 14px 12px; }
     input:focus{
       border-color: color-mix(in oklab, var(--stroke2) 70%, #4a6bff 30%);
       box-shadow: 0 0 0 4px rgba(74,107,255,.12);
@@ -119,7 +91,6 @@
       user-select:none;
       transition: transform .06s ease, border-color .12s ease, background .12s ease;
     }
-    body.night .chip{ font-size:13px; padding: 10px 14px; }
     .chip:active{ transform: scale(.98); }
     .chip.active{
       border-color: #4a6bff;
@@ -146,7 +117,6 @@
     }
     .box .t{ font-size:12px; color:var(--muted); }
     .box .v{ font-size:20px; font-weight:900; margin-top:6px; letter-spacing:.2px; }
-    body.night .box .v{ font-size: 26px; }
 
     .status{
       margin-top: 12px;
@@ -171,14 +141,12 @@
       background:#0a1228;
       white-space:nowrap;
     }
-    body.night .badge{ padding:10px 14px; font-size: 13px; }
 
     .badge.ok{ color: var(--ok); border-color: color-mix(in oklab, var(--ok) 40%, var(--stroke) 60%); }
     .badge.bad{ color: var(--bad); border-color: color-mix(in oklab, var(--bad) 40%, var(--stroke) 60%); }
     .badge.warn{ color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, var(--stroke) 60%); }
 
     .status .msg{ flex:1; color: var(--text); font-size: 13px; line-height:1.35; }
-    body.night .status .msg{ font-size: 14px; }
 
     .sep{ height:1px; background: color-mix(in oklab, var(--stroke) 70%, transparent); margin: 12px 0; }
 
@@ -208,10 +176,7 @@
     }
 
     .bottle .name{ font-weight:900; margin-bottom:6px; font-size: 14px; }
-    body.night .bottle .name{ font-size: 16px; }
-
     .bottle .meta{ font-size:12px; color:var(--muted); line-height:1.35; }
-    body.night .bottle .meta{ font-size: 13px; }
 
     .pTag{
       display:inline-flex;
@@ -262,19 +227,13 @@
   <div class="wrap">
     <div class="top">
       <div>
-        <h1>Calculateur O₂ — Transfert</h1>
+        <h1>Calculateur O₂ — TIH SAMU 74</h1>
         <div class="subtitle">
-
           Configuration :
-          • Stock : 1×15L + 2×5L 
-          • Bouteilles sup : 5L à 200 bar 
+          • Stock : 1×15L + 2×5L
+          • Bouteilles sup : 5L à 200 bar
           • Pression : 🔴≤50 | 🟡51–100 | 🟢101–200
         </div>
-      </div>
-
-      <div class="toggle" id="nightToggle" role="button" aria-label="Mode nuit">
-        <span class="dot"></span>
-        <span id="nightLabel">Mode nuit</span>
       </div>
     </div>
 
@@ -385,7 +344,6 @@
 
   let marginPct = 20;
 
-  // ---- helpers anti-erreur ----
   function clamp(n, min, max){
     n = Number.isFinite(n) ? n : min;
     return Math.min(max, Math.max(min, n));
@@ -393,7 +351,7 @@
   function round(x){ return Math.round(x); }
   function liters(bar, volume){ return Math.max(0, +bar) * volume; }
 
-  // code couleur pression
+  // code couleur pression (conforme à ta règle)
   function pressureClass(bar){
     bar = +bar;
     if (bar <= 50) return { cls:"pRed", label:"ROUGE" };
@@ -409,14 +367,13 @@
       marginPct,
       p15: p15.value,
       p5a: p5a.value,
-      p5b: p5b.value,
-      night: document.body.classList.contains("night")
+      p5b: p5b.value
     };
-    localStorage.setItem("o2_state_v4", JSON.stringify(s));
+    localStorage.setItem("o2_state_clean", JSON.stringify(s));
   }
 
   function loadState(){
-    const raw = localStorage.getItem("o2_state_v4");
+    const raw = localStorage.getItem("o2_state_clean");
     if(!raw) return;
     try{
       const s = JSON.parse(raw);
@@ -426,7 +383,6 @@
       if (s.p5a != null) p5a.value = s.p5a;
       if (s.p5b != null) p5b.value = s.p5b;
       if (s.marginPct != null) marginPct = s.marginPct;
-      if (s.night) document.body.classList.add("night");
     }catch(e){}
   }
 
@@ -452,7 +408,6 @@
   function bottleCard(name, bar, vol, flow){
     const L = liters(bar, vol);
     const t = flow > 0 ? (L/flow) : 0;
-
     const p = pressureClass(bar);
 
     return `
@@ -487,9 +442,10 @@
     if (flow <= 0 || mins <= 0){
       setBadge("warn", "SAISIE");
       statusLine.textContent = "Renseigne un débit et une durée supérieurs à 0.";
-      bottlesEl.innerHTML = bottleCard("15 L", p15.value, 15, Math.max(1, flow)) +
-                            bottleCard("5 L #1", p5a.value, 5, Math.max(1, flow)) +
-                            bottleCard("5 L #2", p5b.value, 5, Math.max(1, flow));
+      bottlesEl.innerHTML =
+        bottleCard("15 L", p15.value, 15, Math.max(1, flow)) +
+        bottleCard("5 L #1", p5a.value, 5, Math.max(1, flow)) +
+        bottleCard("5 L #2", p5b.value, 5, Math.max(1, flow));
       needEl.textContent = "—";
       availableEl.textContent = "—";
       timeAvailEl.textContent = "—";
@@ -559,17 +515,6 @@
     });
   });
 
-  // Mode nuit
-  function updateNightLabel(){
-    const on = document.body.classList.contains("night");
-    document.getElementById("nightLabel").textContent = on ? "Nuit ON" : "Mode nuit";
-  }
-  document.getElementById("nightToggle").addEventListener("click", () => {
-    document.body.classList.toggle("night");
-    updateNightLabel();
-    saveState();
-  });
-
   // Inputs live
   [flowInput, minsInput, p15, p5a, p5b].forEach(el => {
     el.addEventListener("input", calc);
@@ -578,15 +523,13 @@
 
   // Reset
   document.getElementById("resetBtn").addEventListener("click", () => {
-    localStorage.removeItem("o2_state_v4");
+    localStorage.removeItem("o2_state_clean");
     flowInput.value = 6;
     minsInput.value = 60;
     marginPct = 20;
     p15.value = 200;
     p5a.value = 200;
     p5b.value = 200;
-    document.body.classList.remove("night");
-    updateNightLabel();
     updateMarginUI();
     updateMinsUI();
     calc();
@@ -598,7 +541,6 @@
   }
 
   loadState();
-  updateNightLabel();
   updateMarginUI();
   updateMinsUI();
   calc();
