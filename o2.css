@@ -1,0 +1,114 @@
+/* ====== KPI + Status + Bouteilles + Couleurs (O2) ====== */
+
+.kpi{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+  margin-top: 8px;
+}
+@media (max-width:560px){
+  .kpi{ grid-template-columns: 1fr; }
+}
+
+.box{
+  background: linear-gradient(180deg, #0b142d, #081027);
+  border:1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+.box .t{ font-size:12px; color:var(--muted); }
+.box .v{ font-size:20px; font-weight:900; margin-top:6px; letter-spacing:.2px; }
+
+.status{
+  margin-top: 12px;
+  border-radius: 16px;
+  padding: 12px;
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, #0b142d, #081027);
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight:900;
+  letter-spacing:.2px;
+  border:1px solid var(--stroke);
+  background:#0a1228;
+  white-space:nowrap;
+}
+
+.badge.ok{ color: var(--ok); border-color: color-mix(in oklab, var(--ok) 40%, var(--stroke) 60%); }
+.badge.bad{ color: var(--bad); border-color: color-mix(in oklab, var(--bad) 40%, var(--stroke) 60%); }
+.badge.warn{ color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, var(--stroke) 60%); }
+
+.status .msg{ flex:1; color: var(--text); font-size: 13px; line-height:1.35; }
+
+.bottles{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+@media (max-width:860px){
+  .bottles{ grid-template-columns: 1fr; }
+}
+
+.bottle{
+  border:1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 12px;
+  background: linear-gradient(180deg, #0b142d, #081027);
+  position: relative;
+  overflow:hidden;
+}
+.bottle::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(350px 140px at 10% 0%, rgba(255,255,255,.05), transparent 60%);
+  pointer-events:none;
+}
+
+.bottle .name{ font-weight:900; margin-bottom:6px; font-size: 14px; }
+.bottle .meta{ font-size:12px; color:var(--muted); line-height:1.35; }
+
+/* Tag pression + dot */
+.pTag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight:900;
+  border:1px solid var(--stroke);
+  background:#0a1228;
+  margin-top: 8px;
+  width: fit-content;
+}
+.pTag .dotP{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background: var(--pBlue);
+}
+
+/* Couleurs pression (les classes que ton JS applique) */
+.pGreen{ border-color: color-mix(in oklab, var(--pGreen) 45%, var(--stroke) 55%); color: var(--pGreen); }
+.pGreen .dotP{ background: var(--pGreen); }
+
+.pYellow{ border-color: color-mix(in oklab, var(--pYellow) 45%, var(--stroke) 55%); color: var(--pYellow); }
+.pYellow .dotP{ background: var(--pYellow); }
+
+.pRed{ border-color: color-mix(in oklab, var(--pRed) 45%, var(--stroke) 55%); color: var(--pRed); }
+.pRed .dotP{ background: var(--pRed); }
+
+.pBlue{ border-color: color-mix(in oklab, var(--pBlue) 45%, var(--stroke) 55%); color: var(--pBlue); }
+.pBlue .dotP{ background: var(--pBlue); }
