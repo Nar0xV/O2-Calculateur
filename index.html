@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculateur O₂ Transfert</title>
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin:0; background:#0b1220; color:#e7eefc; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 18px; }
+    h1 { font-size: 20px; margin: 6px 0 14px; }
+    .card { background:#111a2e; border:1px solid #233055; border-radius:14px; padding:14px; margin: 12px 0; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { font-size: 12px; opacity:.85; display:block; margin-bottom:6px; }
+    input {
+      width:100%; box-sizing:border-box; padding:10px;
+      border-radius:10px; border:1px solid #2a3a66;
+      background:#0c1326; color:#e7eefc;
+    }
+    button {
+      width:100%; padding:12px; border-radius:12px;
+      border:1px solid #2a3a66;
+      background:#14224a; color:#e7eefc; font-weight:600;
+      margin-top:10px;
+    }
+    .kpi { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .box { background:#0c1326; border:1px solid #233055; border-radius:12px; padding:12px; }
+    .val { font-size: 18px; font-weight:700; margin-top:6px; }
+    .ok { color:#9ef0c3; }
+    .bad { color:#ff8aa0; }
+    .pill {
+      padding:8px; border:1px solid #2a3a66;
+      border-radius:10px; background:#0c1326;
+      margin-top:6px; font-size:12px;
+    }
+    @media (max-width:560px){
+      .grid, .kpi { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <h1>Calculateur O₂ — Transfert</h1>
+
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label>Débit (L/min)</label>
+        <input id="flow" type="number" value="6">
+      </div>
+      <div>
+        <label>Durée totale (min)</label>
+        <input id="mins" type="number" value="60">
+      </div>
+      <div>
+        <label>Marge de sécurité (%)</label>
+        <input id="margin" type="number" value="30">
+      </div>
+      <div>
+        <label>Pression actuelle — 15 L (bar)</label>
+        <input id="p15" type="number" value="200">
+      </div>
+      <div>
+        <label>Pression actuelle — 5 L #1 (bar)</label>
+        <input id="p5a" type="number" value="200">
+      </div>
+      <div>
+        <label>Pression actuelle — 5 L #2 (bar)</label>
+        <input id="p5b" type="number" value="200">
+      </div>
+    </div>
+
+    <button onclick="calc()">Calculer</button>
+  </div>
+
+  <div class="card">
+    <div class="kpi">
+      <div class="box">
+        <div>Besoin total (avec marge)</div>
+        <div class="val" id="need">—</div>
+      </div>
+      <div class="box">
+        <div>O₂ disponible ambulance</div>
+        <div class="val" id="available">—</div>
+      </div>
+      <div class="box">
+        <div>Autonomie totale</div>
+        <div class="val" id="autonomy">—</div>
+      </div>
+      <div class="box">
+        <div>Statut</div>
+        <div class="val" id="status">—</div>
+      </div>
+    </div>
+
+    <div id="details"></div>
+  </div>
+</div>
+
+<script>
+function round(x){
+  return Math.round(x);
+}
+
+function usableLiters(bar, volume){
+  return bar * volume;
+}
+
+function calc(){
+  const flow = +flowInput.value;
+  const mins = +minsInput.value;
+  const margin = +marginInput.value / 100;
+
+  const need = flow * mins * (1 + margin);
+
+  const u15 = usableLiters(+p15.value, 15);
+  const u5a = usableLiters(+p5a.value, 5);
+  const u5b = usableLiters(+p5b.value, 5);
+
+  const total = u15 + u5a + u5b;
+  const autonomy = total / flow;
+
+  needEl.textContent = round(need) + " L";
+  availableEl.textContent = round(total) + " L";
+  autonomyEl.textContent = round(autonomy) + " min";
+
+  let html = `
+    <div class="pill">15 L : ${round(u15)} L (${round(u15/flow)} min)</div>
+    <div class="pill">5 L #1 : ${round(u5a)} L (${round(u5a/flow)} min)</div>
+    <div class="pill">5 L #2 : ${round(u5b)} L (${round(u5b/flow)} min)</div>
+  `;
+
+  if (total >= need){
+    statusEl.innerHTML = "<span class='ok'>OK</span>";
+  } else {
+    const missing = need - total;
+    const oneExtra = 200 * 5; // bouteille standard 5L à 200 bar
+    const count = Math.ceil(missing / oneExtra);
+    statusEl.innerHTML = "<span class='bad'>INSUFFISANT</span>";
+    html += `<div class="pill bad">
+      ➕ Prévoir ${count} bouteille(s) supplémentaire(s) de 5 L à 200 bar
+    </div>`;
+  }
+
+  details.innerHTML = html;
+}
+
+const flowInput = document.getElementById("flow");
+const minsInput = document.getElementById("mins");
+const marginInput = document.getElementById("margin");
+const p15 = document.getElementById("p15");
+const p5a = document.getElementById("p5a");
+const p5b = document.getElementById("p5b");
+
+const needEl = document.getElementById("need");
+const availableEl = document.getElementById("available");
+const autonomyEl = document.getElementById("autonomy");
+const statusEl = document.getElementById("status");
+const details = document.getElementById("details");
+
+calc();
+</script>
+</body>
+</html>
