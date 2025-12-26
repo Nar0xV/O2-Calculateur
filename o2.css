@@ -205,3 +205,7 @@
 @media (max-width:560px){
   .gauge{ --size: 104px; }
 }
+
+.gauge{
+  transition: background 350ms ease, border-color 350ms ease;
+}
