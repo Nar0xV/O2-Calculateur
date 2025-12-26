@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outils — TIH SAMU 74</title>
+
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-1024.png">
+
+  <!-- CSS commun -->
+  <link rel="stylesheet" href="shared.css?v=2" />
+
+  <style>
+    /* === Accueil uniquement (ne touche pas aux classes communes) === */
+    .hero{
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(520px 220px at 10% 0%, rgba(106,166,255,.18), transparent 60%),
+        radial-gradient(520px 240px at 90% 0%, rgba(32,227,162,.14), transparent 65%);
+      pointer-events:none;
+    }
+    .heroInner{
+      position:relative;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .heroTitle{
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:.2px;
+      margin:0;
+    }
+    .heroSub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .pillRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, #0b142d, #081027);
+      color:var(--text);
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.2px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      user-select:none;
+    }
+    .pill .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: #4a6bff;
+      box-shadow: 0 0 0 4px rgba(74,107,255,.12);
+    }
+    .pill.ok .dot{ background: var(--ok); box-shadow: 0 0 0 4px rgba(32,227,162,.12); }
+    .pill.warn .dot{ background: var(--warn); box-shadow: 0 0 0 4px rgba(255,204,128,.12); }
+
+    .toolIcon{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, #0b142d, #081027);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      flex:0 0 auto;
+    }
+
+    .toolHead{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .toolText .name{ font-size:15px; }
+    .toolText .desc{ font-size:12px; }
+
+    .quick{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width:560px){ .quick{ grid-template-columns: 1fr; } }
+
+    .quickBox{
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      padding:12px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+    }
+    .quickBox .t{ font-size:12px; color:var(--muted); }
+    .quickBox .v{ margin-top:6px; font-size:18px; font-weight:900; letter-spacing:.2px; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Outils terrain</h1>
+        <div class="subtitle">TIH SAMU 74 • Accès rapide aux utilitaires (offline si possible).</div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="card hero">
+      <div class="heroInner">
+        <div>
+          <div class="heroTitle">Tableau de bord</div>
+          <div class="heroSub">
+            Ouvre un outil en 1 tap. Conçu pour le terrain : lisible, rapide, et robuste.
+          </div>
+
+          <div class="pillRow">
+            <div class="pill ok" id="netPill"><span class="dot"></span><span id="netTxt">Réseau : —</span></div>
+            <div class="pill" id="pwaPill"><span class="dot"></span><span id="pwaTxt">Mode app : —</span></div>
+            <div class="pill warn"><span class="dot"></span><span>Astuce : ajoute à l’écran d’accueil</span></div>
+          </div>
+        </div>
+
+        <!-- Bouton discret (optionnel) -->
+        <a class="btnLink secondary" href="README.md" style="min-width:auto; flex:0; padding:10px 12px;">Infos</a>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- QUICK INFO -->
+      <div class="quick">
+        <div class="quickBox">
+          <div class="t">Dernière mise à jour</div>
+          <div class="v">Décembre 2025</div>
+          <div class="hint" style="margin-top:6px;">Si un style bug sur iPhone : recharge et vide le cache.</div>
+        </div>
+        <div class="quickBox">
+          <div class="t">Raccourcis</div>
+          <div class="v">O₂ • Planning • Annuaire</div>
+          <div class="hint" style="margin-top:6px;">Tu pourras ajouter d’autres outils ici plus tard.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTILS -->
+    <div class="card">
+      <div class="subtitle">Outils disponibles</div>
+
+      <div class="toolGrid">
+        <div class="toolCard">
+          <div class="toolHead">
+            <div class="toolIcon">🫁</div>
+            <div class="toolText">
+              <div class="name">Calculateur O₂</div>
+              <div class="desc">Besoin en O₂, autonomie, et bouteilles supplémentaires (5 L / 200 bar).</div>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btnLink" href="o2.html">Ouvrir</a>
+            <a class="btnLink secondary" href="o2.html#params">Paramètres</a>
+          </div>
+        </div>
+
+        <div class="toolCard">
+          <div class="toolHead">
+            <div class="toolIcon">📅</div>
+            <div class="toolText">
+              <div class="name">Planning</div>
+              <div class="desc">Lecture planning + aperçu rapide des équipes J1/J2/N1/N2 (IDE & AMP).</div>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btnLink" href="planning.html">Ouvrir</a>
+            <a class="btnLink secondary" href="planning.html#today">Aujourd’hui</a>
+          </div>
+        </div>
+
+        <div class="toolCard">
+          <div class="toolHead">
+            <div class="toolIcon">📞</div>
+            <div class="toolText">
+              <div class="name">Annuaire</div>
+              <div class="desc">Numéros utiles classés : SAU / SMUR / Régulation. Appel + copie.</div>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btnLink" href="annuaire.html">Ouvrir</a>
+            <a class="btnLink secondary" href="annuaire.html#add">Modifier</a>
+          </div>
+        </div>
+
+        <div class="toolCard">
+          <div class="toolHead">
+            <div class="toolIcon">➕</div>
+            <div class="toolText">
+              <div class="name">À venir</div>
+              <div class="desc">On ajoutera tes futurs outils ici (checklists, doses, scores, etc.).</div>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btnLink secondary" href="index.html">Bientôt</a>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Baptiste Ribéron • Outils terrain • SAMU 74
+      </footer>
+    </div>
+  </div>
+
+<script>
+  // Indicateurs réseau / mode app
+  function refreshStatus(){
+    const online = navigator.onLine;
+    const netPill = document.getElementById("netPill");
+    const netTxt = document.getElementById("netTxt");
+    netTxt.textContent = online ? "Réseau : en ligne" : "Réseau : hors-ligne";
+    netPill.classList.toggle("ok", online);
+    netPill.classList.toggle("warn", !online);
+
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    document.getElementById("pwaTxt").textContent = isStandalone ? "Mode app : OUI" : "Mode app : NON";
+    document.getElementById("pwaPill").classList.toggle("ok", isStandalone);
+  }
+
+  window.addEventListener("online", refreshStatus);
+  window.addEventListener("offline", refreshStatus);
+  refreshStatus();
+
+  // Offline (PWA)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  }
+</script>
+</body>
+</html>
