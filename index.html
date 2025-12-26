@@ -1,17 +1,16 @@
 <!doctype html>
 <html lang="fr">
 <head>
-    
-  <link rel="apple-touch-icon" href="icon-1024.png">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculateur O₂ Transfert</title>
   <meta name="theme-color" content="#0b1220" />
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-1024.png">
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
     body { margin:0; background:#0b1220; color:#e7eefc; }
-    .wrap { max-width: 880px; margin: 0 auto; padding: 18px; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 18px; }
     h1 { font-size: 20px; margin: 6px 0 14px; }
     .card { background:#111a2e; border:1px solid #233055; border-radius:14px; padding:14px; margin: 12px 0; }
     .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -20,150 +19,352 @@
       width:100%; box-sizing:border-box; padding:10px;
       border-radius:10px; border:1px solid #2a3a66;
       background:#0c1326; color:#e7eefc;
+      outline:none;
     }
-    button {
-      width:100%; padding:12px; border-radius:12px;
-      border:1px solid #2a3a66;
-      background:#14224a; color:#e7eefc; font-weight:600;
-      margin-top:10px;
+    .row { display:flex; gap:10px; flex-wrap: wrap; }
+    .chip {
+      border:1px solid #2a3a66; background:#0c1326; color:#e7eefc;
+      border-radius:999px; padding:8px 10px; font-size:12px;
+      cursor:pointer; user-select:none;
     }
+    .chip.active { background:#14224a; border-color:#4a6bff; }
     .kpi { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
     .box { background:#0c1326; border:1px solid #233055; border-radius:12px; padding:12px; }
     .val { font-size: 18px; font-weight:700; margin-top:6px; }
     .ok { color:#9ef0c3; }
+    .warn { color:#ffcc80; }
     .bad { color:#ff8aa0; }
-    .pill {
-      padding:8px; border:1px solid #2a3a66;
-      border-radius:10px; background:#0c1326;
-      margin-top:6px; font-size:12px;
+    .hint { font-size:12px; opacity:.8; line-height:1.35; }
+    .pill { padding:10px; border:1px solid #2a3a66; border-radius:12px; background:#0c1326; margin-top:8px; font-size:12px; }
+    .btns { display:flex; gap:10px; flex-wrap: wrap; margin-top: 10px; }
+    button {
+      flex:1; min-width: 160px;
+      padding:12px; border-radius:12px; border:1px solid #2a3a66;
+      background:#14224a; color:#e7eefc; font-weight:600;
     }
+    button.secondary { background:transparent; }
     @media (max-width:560px){
       .grid, .kpi { grid-template-columns: 1fr; }
+      button { min-width: unset; }
     }
   </style>
 </head>
 
 <body>
 <div class="wrap">
-  <h1>Calculateur O₂ — Transfert</h1>
+  <h1>Calculateur O₂ — Transfert (V3 terrain)</h1>
 
   <div class="card">
     <div class="grid">
       <div>
         <label>Débit (L/min)</label>
-        <input id="flow" type="number" value="6">
+        <input id="flow" type="number" inputmode="decimal" min="0" step="0.1" value="6">
+        <div class="row" style="margin-top:8px;">
+          <span class="chip" data-flow="2">2</span>
+          <span class="chip" data-flow="4">4</span>
+          <span class="chip" data-flow="6">6</span>
+          <span class="chip" data-flow="9">9</span>
+          <span class="chip" data-flow="10">10</span>
+          <span class="chip" data-flow="15">15</span>
+        </div>
       </div>
+
       <div>
         <label>Durée totale (min)</label>
-        <input id="mins" type="number" value="60">
+        <input id="mins" type="number" inputmode="numeric" min="0" step="1" value="60">
+        <div class="row" style="margin-top:8px;">
+          <span class="chip" data-mins="15">15</span>
+          <span class="chip" data-mins="30">30</span>
+          <span class="chip" data-mins="45">45</span>
+          <span class="chip" data-mins="60">60</span>
+          <span class="chip" data-mins="90">90</span>
+          <span class="chip" data-mins="120">120</span>
+        </div>
       </div>
-      <div>
-        <label>Marge de sécurité (%)</label>
-        <input id="margin" type="number" value="30">
+
+      <div style="grid-column: 1 / -1;">
+        <label>Marge de sécurité</label>
+        <div class="row" id="marginChips">
+          <span class="chip active" data-margin="10">10%</span>
+          <span class="chip" data-margin="20">20%</span>
+          <span class="chip" data-margin="30">30%</span>
+        </div>
+        <div class="hint" style="margin-top:6px;">
+          Marge actuelle : <b id="marginLabel">10%</b>
+        </div>
       </div>
+
       <div>
         <label>Pression actuelle — 15 L (bar)</label>
-        <input id="p15" type="number" value="200">
+        <input id="p15" type="number" inputmode="numeric" min="0" step="1" value="200">
       </div>
       <div>
         <label>Pression actuelle — 5 L #1 (bar)</label>
-        <input id="p5a" type="number" value="200">
+        <input id="p5a" type="number" inputmode="numeric" min="0" step="1" value="200">
       </div>
       <div>
         <label>Pression actuelle — 5 L #2 (bar)</label>
-        <input id="p5b" type="number" value="200">
+        <input id="p5b" type="number" inputmode="numeric" min="0" step="1" value="200">
       </div>
     </div>
 
-    <button onclick="calc()">Calculer</button>
+    <div class="btns">
+      <button id="copyBtn">Copier le plan O₂</button>
+      <button class="secondary" id="resetBtn">Réinitialiser</button>
+    </div>
+
+    <div class="hint" style="margin-top:8px;">
+      Bouteilles supplémentaires : <b>toujours 5 L à 200 bar</b>. Alerte “faible” sous <b>50 bar</b>.
+    </div>
   </div>
 
   <div class="card">
     <div class="kpi">
       <div class="box">
-        <div>Besoin total (avec marge)</div>
+        <div class="hint">Besoin (avec marge)</div>
         <div class="val" id="need">—</div>
       </div>
       <div class="box">
-        <div>O₂ disponible ambulance</div>
+        <div class="hint">O₂ dispo ambulance</div>
         <div class="val" id="available">—</div>
       </div>
       <div class="box">
-        <div>Autonomie totale</div>
-        <div class="val" id="autonomy">—</div>
+        <div class="hint">Temps dispo (min)</div>
+        <div class="val" id="timeAvailable">—</div>
       </div>
       <div class="box">
-        <div>Statut</div>
-        <div class="val" id="status">—</div>
+        <div class="hint">Marge temps (min)</div>
+        <div class="val" id="timeMargin">—</div>
       </div>
     </div>
 
+    <div class="pill" id="statusLine">—</div>
     <div id="details"></div>
   </div>
 </div>
 
 <script>
-function round(x){
-  return Math.round(x);
-}
+  const LOW_BAR = 50;         // alerte bouteille faible
+  const EXTRA_BOTTLE_BAR = 200;
+  const EXTRA_BOTTLE_VOL = 5;
 
-function usableLiters(bar, volume){
-  return bar * volume;
-}
+  const flowInput = document.getElementById("flow");
+  const minsInput = document.getElementById("mins");
+  const p15 = document.getElementById("p15");
+  const p5a = document.getElementById("p5a");
+  const p5b = document.getElementById("p5b");
 
-function calc(){
-  const flow = +flowInput.value;
-  const mins = +minsInput.value;
-  const margin = +marginInput.value / 100;
+  const needEl = document.getElementById("need");
+  const availableEl = document.getElementById("available");
+  const timeAvailEl = document.getElementById("timeAvailable");
+  const timeMarginEl = document.getElementById("timeMargin");
+  const statusLine = document.getElementById("statusLine");
+  const details = document.getElementById("details");
+  const marginLabel = document.getElementById("marginLabel");
 
-  const need = flow * mins * (1 + margin);
+  let marginPct = 10;
 
-  const u15 = usableLiters(+p15.value, 15);
-  const u5a = usableLiters(+p5a.value, 5);
-  const u5b = usableLiters(+p5b.value, 5);
+  function round(x){ return Math.round(x); }
+  function liters(bar, volume){ return Math.max(0, bar) * volume; }
 
-  const total = u15 + u5a + u5b;
-  const autonomy = total / flow;
-
-  needEl.textContent = round(need) + " L";
-  availableEl.textContent = round(total) + " L";
-  autonomyEl.textContent = round(autonomy) + " min";
-
-  let html = `
-    <div class="pill">15 L : ${round(u15)} L (${round(u15/flow)} min)</div>
-    <div class="pill">5 L #1 : ${round(u5a)} L (${round(u5a/flow)} min)</div>
-    <div class="pill">5 L #2 : ${round(u5b)} L (${round(u5b/flow)} min)</div>
-  `;
-
-  if (total >= need){
-    statusEl.innerHTML = "<span class='ok'>OK</span>";
-  } else {
-    const missing = need - total;
-    const oneExtra = 200 * 5; // bouteille standard 5L à 200 bar
-    const count = Math.ceil(missing / oneExtra);
-    statusEl.innerHTML = "<span class='bad'>INSUFFISANT</span>";
-    html += `<div class="pill bad">
-      ➕ Prévoir ${count} bouteille(s) supplémentaire(s) de 5 L à 200 bar
-    </div>`;
+  function setActiveChip(groupSelector, chipEl){
+    document.querySelectorAll(groupSelector + " .chip").forEach(c => c.classList.remove("active"));
+    chipEl.classList.add("active");
   }
 
-  details.innerHTML = html;
-}
+  function saveState(){
+    const s = {
+      flow: flowInput.value,
+      mins: minsInput.value,
+      marginPct,
+      p15: p15.value, p5a: p5a.value, p5b: p5b.value
+    };
+    localStorage.setItem("o2_state_v3", JSON.stringify(s));
+  }
 
-const flowInput = document.getElementById("flow");
-const minsInput = document.getElementById("mins");
-const marginInput = document.getElementById("margin");
-const p15 = document.getElementById("p15");
-const p5a = document.getElementById("p5a");
-const p5b = document.getElementById("p5b");
+  function loadState(){
+    const raw = localStorage.getItem("o2_state_v3");
+    if(!raw) return;
+    try{
+      const s = JSON.parse(raw);
+      if (s.flow != null) flowInput.value = s.flow;
+      if (s.mins != null) minsInput.value = s.mins;
+      if (s.p15 != null) p15.value = s.p15;
+      if (s.p5a != null) p5a.value = s.p5a;
+      if (s.p5b != null) p5b.value = s.p5b;
+      if (s.marginPct != null) marginPct = s.marginPct;
+    }catch(e){}
+  }
 
-const needEl = document.getElementById("need");
-const availableEl = document.getElementById("available");
-const autonomyEl = document.getElementById("autonomy");
-const statusEl = document.getElementById("status");
-const details = document.getElementById("details");
+  function updateMarginUI(){
+    marginLabel.textContent = marginPct + "%";
+    document.querySelectorAll("#marginChips .chip").forEach(c => {
+      const v = +c.dataset.margin;
+      c.classList.toggle("active", v === marginPct);
+    });
+  }
 
-calc();
+  function bottleLine(label, bar, vol, flow){
+    const L = liters(bar, vol);
+    const t = flow > 0 ? (L / flow) : 0;
+    const low = bar < LOW_BAR;
+    return `
+      <div class="pill" style="border-color:${low ? '#ff8aa0' : '#2a3a66'}">
+        <b>${label}</b> — ${round(L)} L • ${round(t)} min
+        ${low ? `<div class="bad" style="margin-top:4px;">⚠️ Faible: ${bar} bar</div>` : ""}
+      </div>
+    `;
+  }
+
+  function calc(){
+    const flow = +flowInput.value;
+    const mins = +minsInput.value;
+
+    if (flow <= 0 || mins <= 0){
+      statusLine.innerHTML = `<span class="warn">Entre un débit et une durée &gt; 0.</span>`;
+      return;
+    }
+
+    const need = flow * mins * (1 + marginPct/100);
+
+    const u15 = liters(+p15.value, 15);
+    const u5a = liters(+p5a.value, 5);
+    const u5b = liters(+p5b.value, 5);
+
+    const total = u15 + u5a + u5b;
+
+    const timeAvailable = total / flow;
+    const timeMargin = timeAvailable - (mins * (1 + marginPct/100)); // marge après sécurité
+
+    needEl.textContent = round(need) + " L";
+    availableEl.textContent = round(total) + " L";
+    timeAvailEl.textContent = round(timeAvailable) + " min";
+    timeMarginEl.textContent = (timeMargin >= 0 ? "+" : "") + round(timeMargin) + " min";
+
+    const lowAny = (+p15.value < LOW_BAR) || (+p5a.value < LOW_BAR) || (+p5b.value < LOW_BAR);
+
+    let html = "";
+    html += bottleLine("15 L", +p15.value, 15, flow);
+    html += bottleLine("5 L #1", +p5a.value, 5, flow);
+    html += bottleLine("5 L #2", +p5b.value, 5, flow);
+
+    if (total >= need){
+      statusLine.innerHTML =
+        `<span class="ok"><b>OK</b></span> — Suffisant avec marge. ` +
+        `Marge temps ≈ <b>${round(timeMargin)} min</b>.` +
+        (lowAny ? ` <span class="warn">⚠️ Une bouteille est faible.</span>` : "");
+    } else {
+      const missing = need - total;
+      const oneExtra = EXTRA_BOTTLE_BAR * EXTRA_BOTTLE_VOL; // 1000 L
+      const count = Math.ceil(missing / oneExtra);
+      statusLine.innerHTML =
+        `<span class="bad"><b>INSUFFISANT</b></span> — Manque ≈ <b>${round(missing)} L</b>. ` +
+        `Prévoir <b>${count}</b> bouteille(s) supplémentaire(s) <b>5 L à 200 bar</b>.`;
+      html += `<div class="pill bad">➕ À prévoir : <b>${count}</b> × 5 L à 200 bar</div>`;
+    }
+
+    details.innerHTML = html;
+
+    saveState();
+  }
+
+  async function copyPlan(){
+    const flow = +flowInput.value;
+    const mins = +minsInput.value;
+
+    const need = flow * mins * (1 + marginPct/100);
+    const u15 = liters(+p15.value, 15);
+    const u5a = liters(+p5a.value, 5);
+    const u5b = liters(+p5b.value, 5);
+    const total = u15 + u5a + u5b;
+
+    const timeAvailable = total / flow;
+    const ok = total >= need;
+
+    let extraTxt = "";
+    if (!ok){
+      const missing = need - total;
+      const count = Math.ceil(missing / (EXTRA_BOTTLE_BAR * EXTRA_BOTTLE_VOL));
+      extraTxt = ` | +${count}×5L@200`;
+    }
+
+    const text =
+      `Plan O₂: débit ${flow} L/min | durée ${mins} min | marge ${marginPct}% | ` +
+      `besoin ${round(need)} L | dispo ${round(total)} L (~${round(timeAvailable)} min) | ` +
+      `${ok ? "OK" : "INSUFFISANT"}${extraTxt} | ` +
+      `press: 15L=${+p15.value}bar, 5L#1=${+p5a.value}bar, 5L#2=${+p5b.value}bar`;
+
+    try{
+      await navigator.clipboard.writeText(text);
+      statusLine.innerHTML = `<span class="ok"><b>Copié</b></span> — Plan O₂ prêt à coller.`;
+      setTimeout(calc, 900);
+    }catch(e){
+      // fallback simple
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      statusLine.innerHTML = `<span class="ok"><b>Copié</b></span> — Plan O₂ prêt à coller.`;
+      setTimeout(calc, 900);
+    }
+  }
+
+  // chips débit/durée
+  document.querySelectorAll("[data-flow]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("[data-flow]").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      flowInput.value = chip.dataset.flow;
+      calc();
+    });
+  });
+  document.querySelectorAll("[data-mins]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("[data-mins]").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      minsInput.value = chip.dataset.mins;
+      calc();
+    });
+  });
+
+  // chips marge
+  document.querySelectorAll("#marginChips .chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      marginPct = +chip.dataset.margin;
+      updateMarginUI();
+      calc();
+    });
+  });
+
+  // events inputs
+  [flowInput, minsInput, p15, p5a, p5b].forEach(el => {
+    el.addEventListener("input", calc);
+    el.addEventListener("change", calc);
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", copyPlan);
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    localStorage.removeItem("o2_state_v3");
+    flowInput.value = 6;
+    minsInput.value = 60;
+    marginPct = 10;
+    p15.value = 200;
+    p5a.value = 200;
+    p5b.value = 200;
+    updateMarginUI();
+    calc();
+  });
+
+  // Offline
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  }
+
+  loadState();
+  updateMarginUI();
+  calc();
 </script>
 </body>
 </html>
