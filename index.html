@@ -305,8 +305,8 @@
             <span class="chip" data-margin="10">10%</span>
             <span class="chip active" data-margin="20">20%</span>
             <span class="chip" data-margin="30">30%</span>
-            <span class="chip" data-margin="30">40%</span>
-            <span class="chip" data-margin="30">50%</span>
+            <span class="chip" data-margin="40">40%</span>
+            <span class="chip" data-margin="50">50%</span>
           </div>
           <div class="hint" style="margin-top:6px;">Marge actuelle : <b id="marginLabel">20%</b></div>
         </div>
@@ -471,7 +471,7 @@
   }
 
   function normalizeInputs(){
-    flowInput.value = clamp(parseFloat(flowInput.value || "0"), 0, 30);
+    flowInput.value = Math.max(0, parseFloat(flowInput.value || "0"));
     minsInput.value = clamp(parseInt(minsInput.value || "0", 10), 0, 600);
     p15.value = clamp(parseInt(p15.value || "0", 10), 0, 250);
     p5a.value = clamp(parseInt(p5a.value || "0", 10), 0, 250);
