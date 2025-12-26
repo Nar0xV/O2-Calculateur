@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planning – TIH SAMU 74</title>
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-1024.png">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .todayGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px; }
+    @media (max-width:560px){ .todayGrid{ grid-template-columns: 1fr; } }
+
+    .teamTile{
+      border:1px solid var(--stroke);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .teamTile .head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .teamTile .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius: 999px;
+      border:1px solid var(--stroke); background:#0a1228; font-weight:900;
+    }
+    .teamTile .dot{ width:10px; height:10px; border-radius:50%; background: var(--pBlue); }
+    .teamTile .names{
+      margin-top:10px; color:var(--text); font-weight:900;
+      line-height:1.35; white-space:pre-wrap; word-break:break-word;
+    }
+    .teamTile .names.muted{ color:var(--muted); font-weight:700; }
+
+    .imgWrap{ overflow:hidden; border-radius:16px; border:1px solid var(--stroke); background:#081027; }
+    .imgWrap img{ display:block; width:100%; height:auto; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Planning</h1>
+        <div class="subtitle">J1/J2 = Jour • N1/N2 = Nuit — Visuel rapide du jour + import tableau mensuel</div>
+      </div>
+      <div class="row">
+        <a class="btnLink secondary" href="index.html">← Accueil</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <div class="hint">Équipes en poste</div>
+          <div style="font-weight:900; margin-top:4px;" id="plDayTitle">—</div>
+        </div>
+        <div style="min-width:190px;">
+          <label>Date</label>
+          <input id="plDate" type="date">
+        </div>
+      </div>
+
+      <div class="todayGrid" id="teamsGrid"></div>
+
+      <div class="sep"></div>
+
+      <div class="hint" style="margin-bottom:8px;">Importer ton mois (copie depuis Excel/Numbers/Sheets). Format :</div>
+      <div class="hint" style="margin-bottom:10px;">
+        1ère colonne = <b>NOM</b>, puis colonnes <b>1..31</b> avec des valeurs <b>J1/J2/N1/N2</b> (le reste est ignoré).
+      </div>
+
+      <textarea id="plImport" placeholder="Colle ici ton tableau (tabulations ou ;). Exemple :
+NOM  1  2  3
+DUPONT J1    N1
+MARTIN   J2
+"></textarea>
+
+      <div class="btns">
+        <button id="plImportBtn">Importer / Mettre à jour</button>
+        <button class="secondary" id="plClearBtn">Effacer le mois (données)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hint" style="margin-bottom:10px;">Planning (image de référence)</div>
+      <div class="imgWrap" id="planningImgWrap">
+        <img id="planningImg" src="planning-janv-2026.jpg" alt="Planning Janvier 2026"
+             onerror="document.getElementById('planningImgWrap').innerHTML='<div style=&quot;padding:12px;&quot; class=&quot;hint&quot;>Image non trouvée : mets <b>planning-janv-2026.jpg</b> dans le même dossier.</div>';">
+      </div>
+      <footer>On pourra ensuite ajouter un sélecteur par mois.</footer>
+    </div>
+  </div>
+
+  <script type="module" src="shared.js"></script>
+  <script type="module" src="planning.js"></script>
+</body>
+</html>
