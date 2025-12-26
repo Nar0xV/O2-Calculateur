@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Annuaire — SAMU 74</title>
+  <meta name="theme-color" content="#0b1220" />
+
+  <style>
+    :root{
+      --bg1:#070b16; --bg2:#0b1731;
+      --card:#0f1a33cc;
+      --stroke:#22325f;
+      --text:#e8efff; --muted:#a9b7e6;
+      --r:18px;
+
+      --sau:#6aa6ff;
+      --smur:#20e3a2;
+      --reg:#ffd166;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% -10%, #2a5bff33, transparent 60%),
+        radial-gradient(700px 520px at 100% 10%, #00d6ff22, transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 18px; }
+    .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin: 4px 0 14px; }
+    h1{ font-size: 18px; margin:0; letter-spacing:.2px; }
+    .subtitle{ font-size:12px; color:var(--muted); line-height:1.35; }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), #0b1430cc);
+      border:1px solid color-mix(in oklab, var(--stroke) 70%, transparent);
+      border-radius: var(--r);
+      padding:14px;
+      margin: 12px 0;
+      box-shadow: 0 12px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05);
+      backdrop-filter: blur(8px);
+    }
+
+    label{ font-size: 12px; color: var(--muted); display:block; margin-bottom:6px; }
+    input{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, #0b142d, #081027);
+      color: var(--text);
+      outline:none;
+      font-size:14px;
+    }
+
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .tab{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, #0b142d, #081027);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      border-color:#4a6bff;
+      background: linear-gradient(180deg, #142b66, #0b1d4a);
+      box-shadow: 0 0 0 4px rgba(74,107,255,.10);
+    }
+
+    .list{ display:grid; gap:10px; margin-top:10px; }
+    .item{
+      border:1px solid var(--stroke);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+      position: relative;
+      overflow:hidden;
+    }
+    .item::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(350px 140px at 10% 0%, rgba(255,255,255,.05), transparent 60%);
+      pointer-events:none;
+    }
+
+    .rowTop{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .name{ font-weight:900; font-size: 15px; }
+    .meta{ margin-top:4px; font-size:12px; color:var(--muted); }
+
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius:999px; font-weight:900;
+      border:1px solid var(--stroke); background:#0a1228; white-space:nowrap;
+    }
+    .dot{ width:10px; height:10px; border-radius:50%; background: #6aa6ff; }
+
+    .tag.sau{ color: var(--sau); border-color: color-mix(in oklab, var(--sau) 45%, var(--stroke) 55%); }
+    .tag.sau .dot{ background: var(--sau); }
+
+    .tag.smur{ color: var(--smur); border-color: color-mix(in oklab, var(--smur) 45%, var(--stroke) 55%); }
+    .tag.smur .dot{ background: var(--smur); }
+
+    .tag.reg{ color: var(--reg); border-color: color-mix(in oklab, var(--reg) 45%, var(--stroke) 55%); }
+    .tag.reg .dot{ background: var(--reg); }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .btn{
+      flex:1;
+      min-width: 120px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, #142b66, #0b1d4a);
+      color: var(--text);
+      font-weight:900;
+      cursor:pointer;
+      text-align:center;
+      text-decoration:none;
+    }
+    .btn.secondary{ background: transparent; }
+
+    .hint{ font-size:12px; color:var(--muted); margin-top:8px; }
+
+    a.back{
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid var(--stroke);
+      border-radius: 999px;
+      padding: 9px 12px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+      font-size:12px;
+      white-space:nowrap;
+      display:inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Annuaire — Numéros utiles</h1>
+        <div class="subtitle">SAU / SMUR / RÉGULATION • Appel + Copie • Offline</div>
+      </div>
+      <a class="back" href="index.html">Accueil</a>
+    </div>
+
+    <div class="card">
+      <label>Recherche</label>
+      <input id="q" type="text" placeholder="Tape un nom, une ville, un numéro…" autocomplete="off" />
+
+      <div class="hint" style="margin-top:10px;">Catégorie</div>
+      <div class="tabs" style="margin-top:8px;">
+        <div class="tab active" data-cat="ALL">Tout</div>
+        <div class="tab" data-cat="SAU">SAU</div>
+        <div class="tab" data-cat="SMUR">SMUR</div>
+        <div class="tab" data-cat="REGULATION">RÉGULATION</div>
+      </div>
+
+      <div class="hint" id="countLine" style="margin-top:10px;">—</div>
+    </div>
+
+    <div class="card">
+      <div id="list" class="list">—</div>
+    </div>
+  </div>
+
+<script>
+  /* ===========================
+     ✅ ICI TU AJOUTES TES NUMÉROS
+     Format:
+     { cat:"SAU"|"SMUR"|"REGULATION", name:"...", tel:"..." , note:"..." }
+     =========================== */
+  const CONTACTS = [
+    // ---- SAU ----
+    { cat:"SAU", name:"SAU Annecy", tel:"04 50 00 00 00", note:"Standard" },
+    { cat:"SAU", name:"SAU Chambéry", tel:"04 79 00 00 00", note:"Accueil urgences" },
+
+    // ---- SMUR ----
+    { cat:"SMUR", name:"SMUR Annecy", tel:"04 50 00 00 00", note:"Ligne directe" },
+
+    // ---- RÉGULATION ----
+    { cat:"REGULATION", name:"Régulation SAMU", tel:"15", note:"Urgence" },
+    { cat:"REGULATION", name:"Régulation secondaire", tel:"04 50 00 00 00", note:"Option" },
+  ];
+
+  let currentCat = "ALL";
+
+  const $ = (id) => document.getElementById(id);
+  const q = $("q");
+  const list = $("list");
+  const countLine = $("countLine");
+
+  function cleanTel(s){
+    const raw = String(s || "").trim();
+    const plus = raw.startsWith("+") ? "+" : "";
+    const digits = raw.replace(/[^\d]/g, "");
+    return plus + digits;
+  }
+
+  function catLabel(cat){
+    if(cat === "SAU") return "SAU";
+    if(cat === "SMUR") return "SMUR";
+    return "RÉGULATION";
+  }
+
+  function tagClass(cat){
+    if(cat === "SAU") return "sau";
+    if(cat === "SMUR") return "smur";
+    return "reg";
+  }
+
+  function esc(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function render(){
+    const needle = (q.value || "").trim().toLowerCase();
+
+    const filtered = CONTACTS.filter(c => {
+      if(currentCat !== "ALL" && c.cat !== currentCat) return false;
+      if(!needle) return true;
+      const blob = `${c.cat} ${c.name} ${c.tel} ${c.note || ""}`.toLowerCase();
+      return blob.includes(needle);
+    });
+
+    countLine.textContent = `${filtered.length} contact(s)`;
+
+    if(filtered.length === 0){
+      list.innerHTML = `<div class="hint">Aucun résultat.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map((c, idx) => {
+      const telClean = cleanTel(c.tel);
+      const note = c.note ? ` • ${esc(c.note)}` : "";
+      return `
+        <div class="item">
+          <div class="rowTop">
+            <div>
+              <div class="name">${esc(c.name)}</div>
+              <div class="meta">${esc(c.tel)}${note}</div>
+            </div>
+            <div class="tag ${tagClass(c.cat)}">
+              <span class="dot"></span>
+              <span>${catLabel(c.cat)}</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn" href="tel:${telClean}">Appeler</a>
+            <button class="btn secondary" data-copy="${esc(telClean)}">Copier</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // copy handlers
+    list.querySelectorAll("[data-copy]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const val = btn.getAttribute("data-copy") || "";
+        try{
+          await navigator.clipboard.writeText(val);
+          btn.textContent = "Copié ✅";
+          setTimeout(()=> btn.textContent = "Copier", 900);
+        }catch{
+          alert("Copie impossible ici. Copie manuellement le numéro.");
+        }
+      });
+    });
+  }
+
+  // Tabs
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      currentCat = t.dataset.cat;
+      render();
+    });
+  });
+
+  q.addEventListener("input", render);
+
+  render();
+</script>
+</body>
+</html>
