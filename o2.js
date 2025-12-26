@@ -189,9 +189,9 @@ document.querySelectorAll("#marginChips .chip").forEach(chip => {
 
 document.getElementById("resetBtn").addEventListener("click", () => {
   localStorage.removeItem(KEY);
-  flowInput.value = 0;
+  flowInput.value = 3;
   minsInput.value = 15;
-  marginPct = 20;
+  marginPct = 10;
   p15.value = 200;
   p5a.value = 200;
   p5b.value = 200;
