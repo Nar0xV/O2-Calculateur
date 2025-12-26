@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Annuaire — TIH SAMU 74</title>
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-1024.png">
+
+  <!-- Si tu as un shared.css commun, garde-le -->
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="annuaire.css">
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Annuaire — Numéros utiles</h1>
+        <div class="subtitle">Ajoute tes contacts terrain. Tout reste sur ton téléphone (offline).</div>
+      </div>
+      <div class="row">
+        <a class="chip" href="index.html">Accueil</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div style="grid-column:1/-1;">
+          <label>Recherche</label>
+          <input id="q" type="text" placeholder="Nom, service, catégorie, numéro…" autocomplete="off" />
+        </div>
+
+        <div>
+          <label>Catégorie</label>
+          <select id="cat">
+            <option value="">Toutes</option>
+            <option>Régulation</option>
+            <option>SMUR</option>
+            <option>SAU</option>
+            <option>Réanimation</option>
+            <option>Bloc</option>
+            <option>Imagerie</option>
+            <option>Laboratoire</option>
+            <option>Ambulances</option>
+            <option>Police / Gendarmerie</option>
+            <option>Pompier</option>
+            <option>Autre</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Actions</label>
+          <div class="btns">
+            <button id="addBtn">+ Ajouter</button>
+            <button id="exportBtn" class="secondary">Exporter</button>
+            <button id="importBtn" class="secondary">Importer</button>
+          </div>
+        </div>
+
+        <div style="grid-column:1/-1;">
+          <div class="hint" id="countLine">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="list" class="list">—</div>
+    </div>
+
+    <!-- Modal (formulaire) -->
+    <div class="modal" id="modal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalTop">
+          <div class="modalTitle" id="modalTitle">Ajouter un contact</div>
+          <button class="x" id="closeModal" aria-label="Fermer">✕</button>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Nom / Service</label>
+            <input id="fName" type="text" placeholder="ex : SAU Annecy" />
+          </div>
+
+          <div>
+            <label>Catégorie</label>
+            <select id="fCat">
+              <option>Régulation</option><option>SMUR</option><option>SAU</option><option>Réanimation</option>
+              <option>Bloc</option><option>Imagerie</option><option>Laboratoire</option><option>Ambulances</option>
+              <option>Police / Gendarmerie</option><option>Pompier</option><option>Autre</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Téléphone</label>
+            <input id="fTel" type="tel" placeholder="ex : 04 50 xx xx xx" />
+            <div class="hint" style="margin-top:6px;">Astuce : tu peux coller avec espaces, l’app nettoie.</div>
+          </div>
+
+          <div>
+            <label>Notes (optionnel)</label>
+            <input id="fNote" type="text" placeholder="ex : demander IDE de garde" />
+          </div>
+
+          <div style="grid-column:1/-1;">
+            <div class="btns">
+              <button id="saveBtn">Enregistrer</button>
+              <button id="deleteBtn" class="secondary">Supprimer</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hint" style="margin-top:10px;">
+          Export/Import = JSON local (pratique pour migrer ou sauvegarder).
+        </div>
+      </div>
+    </div>
+
+    <!-- Import modal simple -->
+    <div class="modal" id="importModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalTop">
+          <div class="modalTitle">Importer</div>
+          <button class="x" id="closeImport" aria-label="Fermer">✕</button>
+        </div>
+        <label>Colle ici le JSON exporté</label>
+        <textarea id="importArea" style="width:100%; min-height:160px; margin-top:8px; padding:12px; border-radius:14px; border:1px solid var(--stroke); background:linear-gradient(180deg,#0b142d,#081027); color:var(--text);"></textarea>
+        <div class="btns" style="margin-top:10px;">
+          <button id="doImport">Importer</button>
+          <button id="cancelImport" class="secondary">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="annuaire.js"></script>
+</body>
+</html>
