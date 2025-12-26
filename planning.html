@@ -60,7 +60,13 @@
         </div>
       </div>
 
-      <div class="todayGrid" id="teamsGrid"></div>
+      <div class="hint" style="margin-top:10px;">Infirmiers</div>
+<div class="todayGrid" id="teamsGridInf"></div>
+
+<div class="sep"></div>
+
+<div class="hint">Ambulanciers</div>
+<div class="todayGrid" id="teamsGridAmb"></div>
 
       <div class="sep"></div>
 
@@ -69,10 +75,18 @@
         1ère colonne = <b>NOM</b>, puis colonnes <b>1..31</b> avec des valeurs <b>J1/J2/N1/N2</b> (le reste est ignoré).
       </div>
 
-      <textarea id="plImport" placeholder="Colle ici ton tableau (tabulations ou ;). Exemple :
+      <textarea id="plImport" placeholder="Colle ici 2 tableaux : INF puis AMB.
+
+Exemple :
+[INF]
 NOM  1  2  3
 DUPONT J1    N1
 MARTIN   J2
+
+[AMB]
+NOM  1  2  3
+RIBERON J2
+DURAND   N2
 "></textarea>
 
       <div class="btns">
