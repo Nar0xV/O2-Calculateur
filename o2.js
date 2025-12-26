@@ -62,7 +62,6 @@ function bottleCard(name, bar, vol, flow){
       <div class="pTag ${p.cls}">
         <span class="dotP"></span>
         <span>${bar} bar</span>
-        <span style="opacity:.8;">(${p.label})</span>
       </div>
     </div>
   `;
