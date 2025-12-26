@@ -53,32 +53,16 @@ function updateMinsUI(){
 function bottleCard(name, bar, vol, flow){
   const L = liters(bar, vol);
   const t = flow > 0 ? (L/flow) : 0;
-
   const p = pressureClass(bar);
-
-  // 0..1 (on considère 200 bar = plein)
-  const ratio = Math.max(0, Math.min(1, (+bar || 0) / 200));
-
-  // map classe -> variable couleur CSS
-  const colVar =
-    p.cls === "pGreen" ? "var(--pGreen)" :
-    p.cls === "pYellow" ? "var(--pYellow)" :
-    p.cls === "pRed" ? "var(--pRed)" :
-    "var(--pBlue)";
 
   return `
     <div class="bottle">
       <div class="name">${name}</div>
-      <div class="meta">O₂ : <b>${round(L)} L</b> • Autonomie : <b>${round(t)} min</b></div>
-
-      <div class="gauge" style="--val:${ratio}; --c:${colVar};">
-        <div class="gTxt">
-          <div class="bar">${bar}</div>
-          <div class="unit">bar</div>
-        </div>
+      <div class="meta">
+        O₂ : <b>${round(L)} L</b> • Autonomie : <b>${round(t)} min</b>
       </div>
 
-      <div class="pTag ${p.cls}" style="margin-top:10px;">
+      <div class="pTag ${p.cls}">
         <span class="dotP"></span>
         <span>${bar} bar</span>
       </div>
