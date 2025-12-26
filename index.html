@@ -10,19 +10,28 @@
 
   <style>
     :root{
-      --bg1:#070b16;
-      --bg2:#0b1731;
+      --bg1:#070b16; --bg2:#0b1731;
       --card:#0f1a33cc;
-      --card2:#0c142a;
-      --stroke:#22325f;
-      --stroke2:#2a3f78;
-      --text:#e8efff;
-      --muted:#a9b7e6;
-      --ok:#20e3a2;
-      --warn:#ffcc80;
-      --bad:#ff6b8a;
+      --stroke:#22325f; --stroke2:#2a3f78;
+
+      --text:#e8efff; --muted:#a9b7e6;
+
+      --ok:#20e3a2; --warn:#ffcc80; --bad:#ff6b8a;
+
+      --pGreen:#20e3a2;
+      --pYellow:#ffd166;
+      --pRed:#ff6b8a;
+      --pBlue:#6aa6ff;
 
       --r:18px;
+    }
+
+    /* Mode nuit terrain: gros chiffres + contraste */
+    body.night{
+      --bg1:#00030a; --bg2:#030a18;
+      --card:#0b1022f0;
+      --stroke:#1b274b; --stroke2:#2a3f78;
+      --text:#f2f6ff; --muted:#b8c5ff;
     }
 
     *{ box-sizing:border-box; }
@@ -37,13 +46,32 @@
       min-height:100vh;
     }
 
-    .wrap{ max-width: 920px; margin: 0 auto; padding: 18px; }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 18px; }
     .top{
-      display:flex; align-items:center; justify-content:space-between;
+      display:flex; align-items:flex-start; justify-content:space-between;
       gap:12px; margin: 4px 0 14px;
     }
     h1{ font-size: 18px; margin:0; letter-spacing:.2px; }
-    .subtitle{ font-size:12px; color:var(--muted); }
+    .subtitle{ font-size:12px; color:var(--muted); line-height:1.35; }
+
+    .toggle{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #0b142d, #081027);
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+      font-size:12px;
+      color:var(--text);
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: #4a6bff;
+      box-shadow: 0 0 0 4px rgba(74,107,255,.14);
+    }
+    body.night .dot{ background:#20e3a2; box-shadow:0 0 0 4px rgba(32,227,162,.14); }
 
     .card{
       background: linear-gradient(180deg, var(--card), #0b1430cc);
@@ -60,11 +88,7 @@
     .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media (max-width:560px){ .grid{ grid-template-columns: 1fr; } }
 
-    label{
-      font-size: 12px;
-      color: color-mix(in oklab, var(--muted) 92%, white 8%);
-      display:block; margin-bottom:6px;
-    }
+    label{ font-size: 12px; color: color-mix(in oklab, var(--muted) 92%, white 8%); display:block; margin-bottom:6px; }
 
     input{
       width:100%;
@@ -74,7 +98,9 @@
       background: linear-gradient(180deg, #0b142d, #081027);
       color: var(--text);
       outline:none;
+      font-size:14px;
     }
+    body.night input{ font-size: 16px; padding: 14px 12px; }
     input:focus{
       border-color: color-mix(in oklab, var(--stroke2) 70%, #4a6bff 30%);
       box-shadow: 0 0 0 4px rgba(74,107,255,.12);
@@ -93,6 +119,7 @@
       user-select:none;
       transition: transform .06s ease, border-color .12s ease, background .12s ease;
     }
+    body.night .chip{ font-size:13px; padding: 10px 14px; }
     .chip:active{ transform: scale(.98); }
     .chip.active{
       border-color: #4a6bff;
@@ -100,11 +127,7 @@
       box-shadow: 0 0 0 4px rgba(74,107,255,.10);
     }
 
-    .hint{
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.35;
-    }
+    .hint{ font-size:12px; color: var(--muted); line-height:1.35; }
 
     .kpi{
       display:grid;
@@ -122,7 +145,8 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
     }
     .box .t{ font-size:12px; color:var(--muted); }
-    .box .v{ font-size:20px; font-weight:800; margin-top:6px; letter-spacing:.2px; }
+    .box .v{ font-size:20px; font-weight:900; margin-top:6px; letter-spacing:.2px; }
+    body.night .box .v{ font-size: 26px; }
 
     .status{
       margin-top: 12px;
@@ -141,17 +165,21 @@
       gap:8px;
       padding: 8px 12px;
       border-radius: 999px;
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.2px;
       border:1px solid var(--stroke);
       background:#0a1228;
       white-space:nowrap;
     }
+    body.night .badge{ padding:10px 14px; font-size: 13px; }
+
     .badge.ok{ color: var(--ok); border-color: color-mix(in oklab, var(--ok) 40%, var(--stroke) 60%); }
     .badge.bad{ color: var(--bad); border-color: color-mix(in oklab, var(--bad) 40%, var(--stroke) 60%); }
     .badge.warn{ color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, var(--stroke) 60%); }
 
     .status .msg{ flex:1; color: var(--text); font-size: 13px; line-height:1.35; }
+    body.night .status .msg{ font-size: 14px; }
+
     .sep{ height:1px; background: color-mix(in oklab, var(--stroke) 70%, transparent); margin: 12px 0; }
 
     .bottles{
@@ -167,13 +195,49 @@
       border-radius: 16px;
       padding: 12px;
       background: linear-gradient(180deg, #0b142d, #081027);
+      position: relative;
+      overflow:hidden;
     }
-    .bottle .name{ font-weight:800; margin-bottom:6px; }
+
+    .bottle::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(350px 140px at 10% 0%, rgba(255,255,255,.05), transparent 60%);
+      pointer-events:none;
+    }
+
+    .bottle .name{ font-weight:900; margin-bottom:6px; font-size: 14px; }
+    body.night .bottle .name{ font-size: 16px; }
+
     .bottle .meta{ font-size:12px; color:var(--muted); line-height:1.35; }
-    .bottle.low{
-      border-color: color-mix(in oklab, var(--bad) 35%, var(--stroke) 65%);
-      box-shadow: 0 0 0 4px rgba(255,107,138,.08);
+    body.night .bottle .meta{ font-size: 13px; }
+
+    .pTag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight:900;
+      border:1px solid var(--stroke);
+      background:#0a1228;
+      margin-top: 8px;
+      width: fit-content;
     }
+    .pTag .dotP{ width:10px; height:10px; border-radius:50%; background: var(--pBlue); }
+
+    .pGreen{ border-color: color-mix(in oklab, var(--pGreen) 45%, var(--stroke) 55%); color: var(--pGreen); }
+    .pGreen .dotP{ background: var(--pGreen); }
+
+    .pYellow{ border-color: color-mix(in oklab, var(--pYellow) 45%, var(--stroke) 55%); color: var(--pYellow); }
+    .pYellow .dotP{ background: var(--pYellow); }
+
+    .pRed{ border-color: color-mix(in oklab, var(--pRed) 45%, var(--stroke) 55%); color: var(--pRed); }
+    .pRed .dotP{ background: var(--pRed); }
+
+    .pBlue{ border-color: color-mix(in oklab, var(--pBlue) 45%, var(--stroke) 55%); color: var(--pBlue); }
+    .pBlue .dotP{ background: var(--pBlue); }
 
     .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
     button{
@@ -184,12 +248,10 @@
       border:1px solid var(--stroke);
       background: linear-gradient(180deg, #142b66, #0b1d4a);
       color: var(--text);
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
     }
-    button.secondary{
-      background: transparent;
-    }
+    button.secondary{ background: transparent; }
     button:active{ transform: scale(.99); }
 
     footer{ margin-top: 10px; font-size:12px; color: var(--muted); }
@@ -201,7 +263,14 @@
     <div class="top">
       <div>
         <h1>Calculateur O₂ — Transfert</h1>
-        <div class="subtitle">Stock : 1×15L + 2×5L • Bouteilles sup : 5L à 200 bar • Alerte “faible” &lt; 50 bar</div>
+        <div class="subtitle">
+          Stock : 1×15L + 2×5L • Bouteilles sup : 5L à 200 bar • Pression : 🟢101–200 | 🟡51–100 | 🔴≤50
+        </div>
+      </div>
+
+      <div class="toggle" id="nightToggle" role="button" aria-label="Mode nuit">
+        <span class="dot"></span>
+        <span id="nightLabel">Mode nuit</span>
       </div>
     </div>
 
@@ -209,13 +278,13 @@
       <div class="grid">
         <div>
           <label>Débit (L/min)</label>
-          <input id="flow" type="number" inputmode="decimal" min="0" step="0.1" value="6">
-          <div class="hint" style="margin-top:6px;">Astuce : 6 = lunettes / 10–15 = masque haute concentration.</div>
+          <input id="flow" type="number" inputmode="decimal" min="0" max="30" step="0.1" value="6">
+          <div class="hint" style="margin-top:6px;">Saisie simple : tu mets le débit prévu, point.</div>
         </div>
 
         <div>
           <label>Durée totale (min)</label>
-          <input id="mins" type="number" inputmode="numeric" min="0" step="1" value="60">
+          <input id="mins" type="number" inputmode="numeric" min="0" max="600" step="1" value="60">
           <div class="row" style="margin-top:8px;">
             <span class="chip" data-mins="15">15</span>
             <span class="chip" data-mins="30">30</span>
@@ -238,15 +307,15 @@
 
         <div>
           <label>Pression actuelle — 15 L (bar)</label>
-          <input id="p15" type="number" inputmode="numeric" min="0" step="1" value="200">
+          <input id="p15" type="number" inputmode="numeric" min="0" max="250" step="1" value="200">
         </div>
         <div>
           <label>Pression actuelle — 5 L #1 (bar)</label>
-          <input id="p5a" type="number" inputmode="numeric" min="0" step="1" value="200">
+          <input id="p5a" type="number" inputmode="numeric" min="0" max="250" step="1" value="200">
         </div>
         <div>
           <label>Pression actuelle — 5 L #2 (bar)</label>
-          <input id="p5b" type="number" inputmode="numeric" min="0" step="1" value="200">
+          <input id="p5b" type="number" inputmode="numeric" min="0" max="250" step="1" value="200">
         </div>
       </div>
 
@@ -275,7 +344,7 @@
         </div>
       </div>
 
-      <div class="status" id="statusBox">
+      <div class="status">
         <div class="badge warn" id="badge">—</div>
         <div class="msg" id="statusLine">—</div>
       </div>
@@ -286,13 +355,12 @@
       <div class="bottles" id="bottles">—</div>
 
       <footer>
-        ⚠️ Calcul adapté au débitmètre “classique”. Venturi/NIV/HFNC : consommation dépend du dispositif → prudence.
+        Baptsite Ribéron. Dernière mise à jour : Décembre 2025.
       </footer>
     </div>
   </div>
 
 <script>
-  const LOW_BAR = 50;
   const EXTRA_BOTTLE_BAR = 200;
   const EXTRA_BOTTLE_VOL = 5;
 
@@ -313,8 +381,22 @@
 
   let marginPct = 20;
 
+  // ---- helpers anti-erreur ----
+  function clamp(n, min, max){
+    n = Number.isFinite(n) ? n : min;
+    return Math.min(max, Math.max(min, n));
+  }
   function round(x){ return Math.round(x); }
   function liters(bar, volume){ return Math.max(0, +bar) * volume; }
+
+  // code couleur pression
+  function pressureClass(bar){
+    bar = +bar;
+    if (bar <= 50) return { cls:"pRed", label:"ROUGE" };
+    if (bar <= 100) return { cls:"pYellow", label:"JAUNE" };
+    if (bar <= 200) return { cls:"pGreen", label:"VERT" };
+    return { cls:"pBlue", label:">200" };
+  }
 
   function saveState(){
     const s = {
@@ -323,13 +405,14 @@
       marginPct,
       p15: p15.value,
       p5a: p5a.value,
-      p5b: p5b.value
+      p5b: p5b.value,
+      night: document.body.classList.contains("night")
     };
-    localStorage.setItem("o2_state_v3_ui", JSON.stringify(s));
+    localStorage.setItem("o2_state_v4", JSON.stringify(s));
   }
 
   function loadState(){
-    const raw = localStorage.getItem("o2_state_v3_ui");
+    const raw = localStorage.getItem("o2_state_v4");
     if(!raw) return;
     try{
       const s = JSON.parse(raw);
@@ -339,6 +422,7 @@
       if (s.p5a != null) p5a.value = s.p5a;
       if (s.p5b != null) p5b.value = s.p5b;
       if (s.marginPct != null) marginPct = s.marginPct;
+      if (s.night) document.body.classList.add("night");
     }catch(e){}
   }
 
@@ -364,25 +448,49 @@
   function bottleCard(name, bar, vol, flow){
     const L = liters(bar, vol);
     const t = flow > 0 ? (L/flow) : 0;
-    const low = (+bar < LOW_BAR);
+
+    const p = pressureClass(bar);
+
     return `
-      <div class="bottle ${low ? "low" : ""}">
+      <div class="bottle">
         <div class="name">${name}</div>
-        <div class="meta">Pression : <b>${+bar} bar</b></div>
-        <div class="meta">O₂ : <b>${round(L)} L</b></div>
-        <div class="meta">Autonomie : <b>${round(t)} min</b></div>
-        ${low ? `<div class="meta" style="margin-top:6px; color: var(--bad); font-weight:800;">⚠️ Bouteille faible</div>` : ``}
+        <div class="meta">O₂ : <b>${round(L)} L</b> • Autonomie : <b>${round(t)} min</b></div>
+        <div class="pTag ${p.cls}">
+          <span class="dotP"></span>
+          <span>${bar} bar</span>
+          <span style="opacity:.8;">(${p.label})</span>
+        </div>
       </div>
     `;
   }
 
+  function normalizeInputs(){
+    flowInput.value = clamp(parseFloat(flowInput.value || "0"), 0, 30);
+    minsInput.value = clamp(parseInt(minsInput.value || "0", 10), 0, 600);
+    p15.value = clamp(parseInt(p15.value || "0", 10), 0, 250);
+    p5a.value = clamp(parseInt(p5a.value || "0", 10), 0, 250);
+    p5b.value = clamp(parseInt(p5b.value || "0", 10), 0, 250);
+  }
+
   function calc(){
+    normalizeInputs();
+
     const flow = +flowInput.value;
     const mins = +minsInput.value;
+
+    updateMinsUI();
 
     if (flow <= 0 || mins <= 0){
       setBadge("warn", "SAISIE");
       statusLine.textContent = "Renseigne un débit et une durée supérieurs à 0.";
+      bottlesEl.innerHTML = bottleCard("15 L", p15.value, 15, Math.max(1, flow)) +
+                            bottleCard("5 L #1", p5a.value, 5, Math.max(1, flow)) +
+                            bottleCard("5 L #2", p5b.value, 5, Math.max(1, flow));
+      needEl.textContent = "—";
+      availableEl.textContent = "—";
+      timeAvailEl.textContent = "—";
+      timeMarginEl.textContent = "—";
+      saveState();
       return;
     }
 
@@ -393,6 +501,7 @@
     const u5b = liters(p5b.value, 5);
 
     const total = u15 + u5a + u5b;
+
     const timeAvailable = total / flow;
     const timeMargin = timeAvailable - (mins * (1 + marginPct/100));
 
@@ -406,13 +515,16 @@
       bottleCard("5 L #1", p5a.value, 5, flow) +
       bottleCard("5 L #2", p5b.value, 5, flow);
 
-    const lowAny = (+p15.value < LOW_BAR) || (+p5a.value < LOW_BAR) || (+p5b.value < LOW_BAR);
+    const redAny = (+p15.value <= 50) || (+p5a.value <= 50) || (+p5b.value <= 50);
+    const yellowAny = (!redAny) && ((+p15.value <= 100) || (+p5a.value <= 100) || (+p5b.value <= 100));
 
     if (total >= need){
-      setBadge(lowAny ? "warn" : "ok", lowAny ? "OK + ⚠️" : "OK");
+      setBadge(redAny || yellowAny ? "warn" : "ok", redAny || yellowAny ? "OK + ⚠️" : "OK");
       statusLine.innerHTML =
         `Suffisant avec marge. Marge temps ≈ <b>${round(timeMargin)} min</b>.` +
-        (lowAny ? ` <span style="color:var(--warn); font-weight:800;">Vérifie/replace la bouteille faible.</span>` : ``);
+        (redAny ? ` <span style="color:var(--bad); font-weight:900;">Au moins une bouteille est en rouge.</span>` :
+         yellowAny ? ` <span style="color:var(--warn); font-weight:900;">Au moins une bouteille est en jaune.</span>` :
+         ``);
     } else {
       const missing = need - total;
       const oneExtra = EXTRA_BOTTLE_BAR * EXTRA_BOTTLE_VOL; // 1000 L
@@ -424,7 +536,6 @@
     }
 
     saveState();
-    updateMinsUI();
   }
 
   // Durée chips
@@ -444,7 +555,18 @@
     });
   });
 
-  // Inputs
+  // Mode nuit
+  function updateNightLabel(){
+    const on = document.body.classList.contains("night");
+    document.getElementById("nightLabel").textContent = on ? "Nuit ON" : "Mode nuit";
+  }
+  document.getElementById("nightToggle").addEventListener("click", () => {
+    document.body.classList.toggle("night");
+    updateNightLabel();
+    saveState();
+  });
+
+  // Inputs live
   [flowInput, minsInput, p15, p5a, p5b].forEach(el => {
     el.addEventListener("input", calc);
     el.addEventListener("change", calc);
@@ -452,13 +574,15 @@
 
   // Reset
   document.getElementById("resetBtn").addEventListener("click", () => {
-    localStorage.removeItem("o2_state_v3_ui");
+    localStorage.removeItem("o2_state_v4");
     flowInput.value = 6;
     minsInput.value = 60;
     marginPct = 20;
     p15.value = 200;
     p5a.value = 200;
     p5b.value = 200;
+    document.body.classList.remove("night");
+    updateNightLabel();
     updateMarginUI();
     updateMinsUI();
     calc();
@@ -470,6 +594,7 @@
   }
 
   loadState();
+  updateNightLabel();
   updateMarginUI();
   updateMinsUI();
   calc();
