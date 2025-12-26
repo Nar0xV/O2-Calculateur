@@ -63,7 +63,6 @@
       background: #4a6bff;
       box-shadow: 0 0 0 4px rgba(74,107,255,.14);
     }
-    body.night .dot{ background:#20e3a2; box-shadow:0 0 0 4px rgba(32,227,162,.14); }
 
     .card{
       background: linear-gradient(180deg, var(--card), #0b1430cc);
@@ -92,7 +91,7 @@
       outline:none;
       font-size:14px;
     }
-    body.night input{ font-size: 16px; padding: 14px 12px; }
+
     input:focus{
       border-color: color-mix(in oklab, var(--stroke2) 70%, #4a6bff 30%);
       box-shadow: 0 0 0 4px rgba(74,107,255,.12);
@@ -111,7 +110,7 @@
       user-select:none;
       transition: transform .06s ease, border-color .12s ease, background .12s ease;
     }
-    body.night .chip{ font-size:13px; padding: 10px 14px; }
+
     .chip:active{ transform: scale(.98); }
     .chip.active{
       border-color: #4a6bff;
@@ -138,7 +137,7 @@
     }
     .box .t{ font-size:12px; color:var(--muted); }
     .box .v{ font-size:20px; font-weight:900; margin-top:6px; letter-spacing:.2px; }
-    body.night .box .v{ font-size: 26px; }
+
 
     .status{
       margin-top: 12px;
@@ -163,14 +162,14 @@
       background:#0a1228;
       white-space:nowrap;
     }
-    body.night .badge{ padding:10px 14px; font-size: 13px; }
+
 
     .badge.ok{ color: var(--ok); border-color: color-mix(in oklab, var(--ok) 40%, var(--stroke) 60%); }
     .badge.bad{ color: var(--bad); border-color: color-mix(in oklab, var(--bad) 40%, var(--stroke) 60%); }
     .badge.warn{ color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, var(--stroke) 60%); }
 
     .status .msg{ flex:1; color: var(--text); font-size: 13px; line-height:1.35; }
-    body.night .status .msg{ font-size: 14px; }
+
 
     .sep{ height:1px; background: color-mix(in oklab, var(--stroke) 70%, transparent); margin: 12px 0; }
 
@@ -200,10 +199,8 @@
     }
 
     .bottle .name{ font-weight:900; margin-bottom:6px; font-size: 14px; }
-    body.night .bottle .name{ font-size: 16px; }
 
     .bottle .meta{ font-size:12px; color:var(--muted); line-height:1.35; }
-    body.night .bottle .meta{ font-size: 13px; }
 
     .pTag{
       display:inline-flex;
@@ -401,7 +398,6 @@
       p15: p15.value,
       p5a: p5a.value,
       p5b: p5b.value,
-      night: document.body.classList.contains("night")
     };
     localStorage.setItem("o2_state_v4", JSON.stringify(s));
   }
@@ -417,7 +413,6 @@
       if (s.p5a != null) p5a.value = s.p5a;
       if (s.p5b != null) p5b.value = s.p5b;
       if (s.marginPct != null) marginPct = s.marginPct;
-      if (s.night) document.body.classList.add("night");
     }catch(e){}
   }
 
@@ -577,7 +572,6 @@
   }
 
   loadState();
-  updateNightLabel();
   updateMarginUI();
   updateMinsUI();
   calc();
